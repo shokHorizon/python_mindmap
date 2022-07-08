@@ -22,22 +22,25 @@ def getCanvasList(request):
     serializer = CanvasSerializer(canvas_list, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
-def getNode(request):
-    try:
-        node = Node.objects.get(id=request.GET.get('id')) or None
-        serializer = NodeSerializer(node, many=False)
+@api_view(['PUT'])
+def editCanvas(request, pk):
+    canvas = Node.objects.get(id=pk)
+    serializer = NodeSerializer(instance=canvas, data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
         return Response(serializer.data)
+    return Response(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['DELETE'])
+def deleteCanvas(request, pk):
+    try:
+        canvas = Canvas.objects.get(id=pk) or None
+        canvas.delete()
+        return Response(status=status.HTTP_200_OK)
     except Canvas.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET'])
-def getNodeList(request):
-    node_list = Node.objects.filter(canvas=request.GET.get('id')) or None
-    if not node_list:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    serializer = NodeSerializer(node_list, many=True)
-    return Response(serializer.data)
 
 @api_view(['POST'])
 def addNode(request):
@@ -48,7 +51,24 @@ def addNode(request):
         return Response(data)
     return Response(status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['POST'])
+@api_view(['GET'])
+def getNode(request):
+    try:
+        node = Node.objects.get(id=request.GET.get('id')) or None
+        serializer = NodeSerializer(node, many=False)
+        return Response(serializer.data)
+    except Node.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def getNodeList(request):
+    node_list = Node.objects.filter(canvas=request.GET.get('id')) or None
+    if not node_list:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    serializer = NodeSerializer(node_list, many=True)
+    return Response(serializer.data)
+
+@api_view(['PUT'])
 def editNode(request, pk):
     node = Node.objects.get(id=pk)
     serializer = NodeSerializer(instance=node, data=request.data)
@@ -56,7 +76,7 @@ def editNode(request, pk):
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
-    return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+    return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['DELETE'])
 def deleteNode(request, pk):
@@ -64,7 +84,5 @@ def deleteNode(request, pk):
         node = Node.objects.get(id=pk) or None
         node.delete()
         return Response(status=status.HTTP_200_OK)
-    except Canvas.DoesNotExist:
+    except Node.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-
-
