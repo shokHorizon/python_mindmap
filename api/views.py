@@ -7,6 +7,15 @@ from mindmap.models import Canvas, Node
 from .serializers import CanvasSerializer, NodeSerializer
 
 
+@api_view(['POST'])
+def addCanvas(request):
+    serializer = CanvasSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        data = serializer.data
+        return Response(data)
+    return Response(status=status.HTTP_304_NOT_MODIFIED)
+
 @api_view(['GET'])
 def getCanvas(request):
     try:
@@ -24,8 +33,8 @@ def getCanvasList(request):
 
 @api_view(['PUT'])
 def editCanvas(request, pk):
-    canvas = Node.objects.get(id=pk)
-    serializer = NodeSerializer(instance=canvas, data=request.data)
+    canvas = Canvas.objects.get(id=pk)
+    serializer = CanvasSerializer(instance=canvas, data=request.data)
 
     if serializer.is_valid():
         serializer.save()

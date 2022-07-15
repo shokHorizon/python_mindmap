@@ -3,14 +3,15 @@ from . import views
 
 
 urlpatterns = [
-    path('getCanvas/', views.getCanvas),
+    path('addCanvas/', views.addCanvas),
     path('getCanvasList/', views.getCanvasList),
+    path('getCanvas/', views.getCanvas),
+    path('editCanvas/<int:pk>/', views.editCanvas),
     path('deleteCanvas/<int:pk>/', views.deleteCanvas),
 
     path('addNode/', views.addNode),
     path('editNode/<int:pk>/', views.editNode),
-    path('getNode/', views.getNode),
     path('getNodeList/', views.getNodeList),
+    path('getNode/', views.getNode),
     path('deleteNode/<int:pk>/', views.deleteNode),
-    
 ]
